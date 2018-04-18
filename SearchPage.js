@@ -10,6 +10,7 @@ import {
   ActivityIndicator,
   Image,
 } from 'react-native';
+import SearchResults from './SearchResults';
 
 function urlForQueryAndPage(key, value, pageNumber) {
   const data = {
@@ -46,11 +47,13 @@ export default class SearchPage extends Component<{}> {
   };
 
   _onSearchPressed = () => {
+    console.log('SearchPage._onSearchPressed');
     const query = urlForQueryAndPage('place_name', this.state.searchString, 1);
     this._executeQuery(query);
   };
 
   _executeQuery = (query) => {
+    console.log('SearchPage._executeQuery');
     console.log(query);
     this.setState({ isLoading: true });
     fetch(query)
@@ -64,15 +67,22 @@ export default class SearchPage extends Component<{}> {
   };
 
   _handleResponse = (response) => {
+    console.log('SearchPage._handleResponse');
   this.setState({ isLoading: false , message: '' });
   if (response.application_response_code.substr(0, 1) === '1') {
     console.log('Properties found: ' + response.listings.length);
+    this.props.navigator.push({
+      title: 'Results',
+      component: SearchResults,
+      passProps: {listings: response.listings}
+    });
   } else {
     this.setState({ message: 'Location not recognized; please try again.'});
   }
 };
 
   render() {
+    console.log('SearchPage.render');
     const spinner = this.state.isLoading ? <ActivityIndicator size='large'/> : null;
     return (
       <View style={styles.container}>
