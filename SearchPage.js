@@ -10,7 +10,7 @@ import {
   Image,
 } from 'react-native';
 import SearchResults from './SearchResults';
-
+import { Appsee } from './Appsee';
 
 function urlForQueryAndPage(key, value, pageNumber) {
   const data = {
@@ -32,6 +32,7 @@ function urlForQueryAndPage(key, value, pageNumber) {
 
 export default class SearchPage extends Component<{}> {
   constructor(props) {
+    //Appsee.startScreen("SearchPage");
     super(props);
     this.state = {
       searchString: 'london',
@@ -41,13 +42,13 @@ export default class SearchPage extends Component<{}> {
   }
 
   _onSearchTextChanged = (event) => {
+    Appsee.addEvent("State Change");
     this.setState({ searchString: event.nativeEvent.text });
   };
 
   _executeQuery = (query) => {
-    console.log('SearchPage._executeQuery');
-    console.log(query);
     this.setState({ isLoading: true });
+    //query=1/0;
     fetch(query)
       .then(response => response.json())
       .then(json => this._handleResponse(json.response))
@@ -59,7 +60,6 @@ export default class SearchPage extends Component<{}> {
   };
 
   _handleResponse = (response) => {
-    console.log('SearchPage._handleResponse');
     this.setState({ isLoading: false , message: '' });
     if (response.application_response_code.substr(0, 1) === '1') {
       //console.log('Properties found: ' + response.listings.length);
@@ -74,13 +74,16 @@ export default class SearchPage extends Component<{}> {
   };
 
   _onSearchPressed = () => {
-    console.log('SearchPage._onSearchPressed');
+    Appsee.addScreenAction("GoButtonClick");
     const query = urlForQueryAndPage('place_name', this.state.searchString, 1);
     this._executeQuery(query);
   };
 
   render() {
-    console.log('SearchPage.render');
+    Appsee.startScreen("SearchPageMM");
+    Appsee.setUserId("MM");
+    Appsee.setLocationDescription("GOT Tualatin");
+    //console.log('SearchPage.render');
     const spinner = this.state.isLoading ?
       <ActivityIndicator size='large'/> : null;
     return (
@@ -99,12 +102,18 @@ export default class SearchPage extends Component<{}> {
             placeholder='Search via name or postcode'
           />
           <Button
-            //Appsee.addEvent("Go"); 
+            //Appsee.addEvent("Go");
             onPress={this._onSearchPressed}
             color='#48BBEC'
             title='Go'
           />
         </View>
+        <Button
+          //Appsee.addEvent("Go");
+          onPress={this._onSearchCrash}
+          color='#000000'
+          title='Crash'
+        />
         <Image source={require('./Resources/house.png')} style={styles.image}/>
         {spinner}
         <Text style={styles.description}>{this.state.message}</Text>
@@ -144,5 +153,8 @@ const styles = StyleSheet.create({
   image: {
     width: 217,
     height: 138,
+  },
+  button: {
+    color:  '#000000',
   },
 });

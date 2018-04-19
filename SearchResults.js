@@ -14,6 +14,7 @@ import {
 
 class ListItem extends React.PureComponent {
   _onPress = () => {
+    Appsee.addEvent("click listing");
     this.props.onPressItem(this.props.index);
   }
 

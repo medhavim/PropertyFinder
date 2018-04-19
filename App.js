@@ -9,14 +9,13 @@ import {
   StyleSheet,
   NavigatorIOS,
 } from 'react-native';
+import { Appsee } from './Appsee';
 import SearchPage from './SearchPage';
+
 
 export default class App extends Component<{}> {
   render() {
-    var Appsee = require('react-native-appsee');
     Appsee.start("0a475f053c7c4f98a45e5c09435febd4");
-    Appsee.setUserId("1234");
-    Appsee.setLocationDescription("Office");
     return (
       <NavigatorIOS
         style={styles.container}
