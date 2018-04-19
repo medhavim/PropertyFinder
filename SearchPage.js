@@ -1,5 +1,4 @@
 'use strict';
-
 import React, { Component } from 'react';
 import {
   StyleSheet,
@@ -11,6 +10,7 @@ import {
   Image,
 } from 'react-native';
 import SearchResults from './SearchResults';
+
 
 function urlForQueryAndPage(key, value, pageNumber) {
   const data = {
@@ -41,15 +41,7 @@ export default class SearchPage extends Component<{}> {
   }
 
   _onSearchTextChanged = (event) => {
-    console.log('_onSearchTextChanged');
     this.setState({ searchString: event.nativeEvent.text });
-    console.log('Current: '+this.state.searchString+', Next: '+event.nativeEvent.text);
-  };
-
-  _onSearchPressed = () => {
-    console.log('SearchPage._onSearchPressed');
-    const query = urlForQueryAndPage('place_name', this.state.searchString, 1);
-    this._executeQuery(query);
   };
 
   _executeQuery = (query) => {
@@ -61,29 +53,36 @@ export default class SearchPage extends Component<{}> {
       .then(json => this._handleResponse(json.response))
       .catch(error =>
         this.setState({
-        isLoading: false,
-        message: 'Something bad happened ' + error
-    }));
+          isLoading: false,
+          message: 'Something bad happened ' + error
+      }));
   };
 
   _handleResponse = (response) => {
     console.log('SearchPage._handleResponse');
-  this.setState({ isLoading: false , message: '' });
-  if (response.application_response_code.substr(0, 1) === '1') {
-    console.log('Properties found: ' + response.listings.length);
-    this.props.navigator.push({
-      title: 'Results',
-      component: SearchResults,
-      passProps: {listings: response.listings}
-    });
-  } else {
-    this.setState({ message: 'Location not recognized; please try again.'});
-  }
-};
+    this.setState({ isLoading: false , message: '' });
+    if (response.application_response_code.substr(0, 1) === '1') {
+      //console.log('Properties found: ' + response.listings.length);
+      this.props.navigator.push({
+        title: 'Results',
+        component: SearchResults,
+        passProps: {listings: response.listings}
+      });
+    } else {
+      this.setState({ message: 'Location not recognized; please try again.'});
+    }
+  };
+
+  _onSearchPressed = () => {
+    console.log('SearchPage._onSearchPressed');
+    const query = urlForQueryAndPage('place_name', this.state.searchString, 1);
+    this._executeQuery(query);
+  };
 
   render() {
     console.log('SearchPage.render');
-    const spinner = this.state.isLoading ? <ActivityIndicator size='large'/> : null;
+    const spinner = this.state.isLoading ?
+      <ActivityIndicator size='large'/> : null;
     return (
       <View style={styles.container}>
         <Text style={styles.description}>
@@ -97,11 +96,11 @@ export default class SearchPage extends Component<{}> {
             style={styles.searchInput}
             value={this.state.searchString}
             onChange={this._onSearchTextChanged}
-            onPress={this._onSearchPressed}
             placeholder='Search via name or postcode'
           />
           <Button
-            onPress={() => {}}
+            //Appsee.addEvent("Go"); 
+            onPress={this._onSearchPressed}
             color='#48BBEC'
             title='Go'
           />
